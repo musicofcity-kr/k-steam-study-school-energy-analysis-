@@ -9,6 +9,8 @@ export const gaewonSchoolContext = {
   address: '서울특별시 강남구 영동대로 101',
   district: '강남구',
   localPowerRegion: '개포동',
+  dataAsOf: '2026-07',
+  // 학생수와 교원수는 공시 시기별로 변할 수 있으므로 수업 전 출처 재확인이 필요합니다.
   studentCount: 966,
   teacherCount: 65,
   homepage: 'https://gaewon.sen.ms.kr/',

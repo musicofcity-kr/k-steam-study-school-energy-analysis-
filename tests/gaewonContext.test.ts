@@ -16,6 +16,8 @@ describe('gaewon data pack integration', () => {
     lowestHour: null,
     lowestUsageKWh: 0,
     rowCount: 0,
+    dayCount: 0,
+    byHourMode: 'sum',
     regionLabel: '데이터 없음',
     byHour: []
   };
@@ -54,6 +56,7 @@ describe('gaewon data pack integration', () => {
         rows: [],
         summary: emptySummary,
         dataSource: '데이터 없음',
+        dataMessage: '',
         uploadInputRef: createRef<HTMLInputElement>(),
         onRowsParsed: () => undefined,
         onLoadPractice: () => undefined

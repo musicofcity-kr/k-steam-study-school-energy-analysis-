@@ -82,4 +82,12 @@ describe('parseEnergyCsv', () => {
     expect(result.rows).toHaveLength(0);
     expect(result.errors.map((error) => error.code)).toContain('PARSER_ERROR');
   });
+
+  it('accepts common Korean hour labels before numeric validation', () => {
+    const csv = 'date,hour,region,usage_kWh\npractice,14시,A,100\npractice,15:00,A,120';
+    const result = parseEnergyCsv(csv);
+
+    expect(result.errors).toHaveLength(0);
+    expect(result.rows.map((row) => row.hour)).toEqual([14, 15]);
+  });
 });

@@ -14,9 +14,9 @@ export type EnergyScenario = {
 };
 
 export type TeacherAssumptions = {
-  solarMaxKWh: number;
-  hydrogenMaxKWh: number;
-  nuclearMaxKWh: number;
+  solarMaxKWhPerHour: number;
+  hydrogenMaxKWhPerHour: number;
+  nuclearMaxKWhPerHour: number;
   savingMaxRate: number;
   gridEmissionFactor: number;
 };
@@ -58,6 +58,8 @@ export type UsageSummary = {
   lowestHour: number | null;
   lowestUsageKWh: number;
   rowCount: number;
+  dayCount: number;
+  byHourMode: 'sum' | 'average';
   regionLabel: string;
   byHour: Array<{ hour: number; usageKWh: number }>;
 };
@@ -73,6 +75,8 @@ export type ScenarioResult = {
     essKWh: number;
   };
   selfSufficiencyRate: number;
+  surplusKWh: number;
+  isSurplus: boolean;
   stabilityScore: number;
   diversityScore: number;
   environmentalScore: number;

@@ -37,6 +37,17 @@ function toNumber(value: string | number | null | undefined): number {
   if (normalized === '') {
     return Number.NaN;
   }
+
+  const koreanHourMatch = normalized.match(/^(\d{1,2})\s*시$/);
+  if (koreanHourMatch) {
+    return Number(koreanHourMatch[1]);
+  }
+
+  const clockHourMatch = normalized.match(/^(\d{1,2}):[0-5]\d(?:\s*:\s*[0-5]\d)?$/);
+  if (clockHourMatch) {
+    return Number(clockHourMatch[1]);
+  }
+
   return Number(normalized);
 }
 

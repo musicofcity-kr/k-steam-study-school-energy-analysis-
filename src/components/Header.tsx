@@ -5,6 +5,8 @@ type HeaderProps = {
 };
 
 export function Header({ rowCount, selfSufficiencyRate, dataSource }: HeaderProps) {
+  const selfSufficiencyLabel = selfSufficiencyRate > 100 ? '100% 달성' : `${selfSufficiencyRate}%`;
+
   return (
     <header className="topbar">
       <a className="brand" href="#start">
@@ -18,7 +20,7 @@ export function Header({ rowCount, selfSufficiencyRate, dataSource }: HeaderProp
       </a>
       <div className="status-pills" aria-label="현재 활동 상태">
         <span>{rowCount > 0 ? `데이터 ${rowCount}행` : '데이터 대기'}</span>
-        <span>자립률 {selfSufficiencyRate}%</span>
+        <span>자립률 {selfSufficiencyLabel}</span>
         <span>{dataSource}</span>
       </div>
     </header>

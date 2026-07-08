@@ -2,11 +2,13 @@ import { useState, type ChangeEvent, type RefObject } from 'react';
 import { gaewonPowerUsageSource, gaewonSchoolContext, gaewonTemplatePath } from '../data/gaewonSchoolContext';
 import type { ColumnMapping, CsvParseResult, EnergyUsageRow, UsageSummary } from '../types';
 import { parseEnergyCsv } from '../utils/csvParser';
+import { decodeCsvBytes } from '../utils/decodeCsvFile';
 
 type DataUploadSectionProps = {
   rows: EnergyUsageRow[];
   summary: UsageSummary;
   dataSource: string;
+  dataMessage: string;
   uploadInputRef: RefObject<HTMLInputElement | null>;
   onRowsParsed: (rows: EnergyUsageRow[], sourceLabel: string) => void;
   onLoadPractice: () => void;
@@ -25,6 +27,7 @@ export function DataUploadSection({
   rows,
   summary,
   dataSource,
+  dataMessage,
   uploadInputRef,
   onRowsParsed,
   onLoadPractice
@@ -33,6 +36,7 @@ export function DataUploadSection({
   const [currentSourceLabel, setCurrentSourceLabel] = useState('');
   const [parseResult, setParseResult] = useState<CsvParseResult>(emptyResult);
   const [mapping, setMapping] = useState<ColumnMapping>({});
+  const [decodeMessage, setDecodeMessage] = useState('');
 
   const applyResult = (result: CsvParseResult, sourceLabel: string) => {
     setParseResult(result);
@@ -57,18 +61,21 @@ export function DataUploadSection({
           }
         ]
       });
+      setDecodeMessage('');
       onRowsParsed([], file.name);
       return;
     }
 
     const reader = new FileReader();
     reader.onload = () => {
-      const text = String(reader.result ?? '');
+      const decoded = decodeCsvBytes(reader.result as ArrayBuffer);
+      const text = decoded.text;
       setCsvText(text);
       setCurrentSourceLabel(file.name);
+      setDecodeMessage(`이 파일은 ${decoded.encoding.toUpperCase()} 인코딩으로 읽었어요.`);
       applyResult(parseEnergyCsv(text), file.name);
     };
-    reader.readAsText(file, 'UTF-8');
+    reader.readAsArrayBuffer(file);
   };
 
   const applyManualMapping = () => {
@@ -107,6 +114,8 @@ export function DataUploadSection({
         <div className="source-note">
           <strong>현재 데이터:</strong> {dataSource}
         </div>
+        {dataMessage && <div className="message success">{dataMessage}</div>}
+        {decodeMessage && <div className="message info">{decodeMessage}</div>}
         <div className="source-note">
           <strong>{gaewonSchoolContext.schoolName} 데이터 팩:</strong> 전력 템플릿은 {gaewonSchoolContext.localPowerRegion} 24시간 입력 틀입니다.
           `usage_kWh` 값을 교사가 실제 자료로 채운 뒤 업로드하세요.

@@ -11,6 +11,12 @@ const formatStrategies = (strategies: string[]) =>
 export function buildReportDraft(input: ReportInput): string {
   const peakHour = input.result.summary.peakHour === null ? '데이터 확인 후 입력' : `${input.result.summary.peakHour}시`;
   const strategies = formatStrategies(input.keyStrategies);
+  const selfSufficiencyLine = input.result.isSurplus
+    ? `에너지 자립률: 100% 달성, 잉여 전력 ${input.result.surplusKWh} kWh`
+    : `에너지 자립률: 약 ${input.result.selfSufficiencyRate}%`;
+  const surplusDiscussion = input.result.isSurplus
+    ? `- 잉여 전력은 저장하거나 이웃 지역과 나누는 방법을 토론해야 합니다.`
+    : '- 부족한 전력은 외부 전력망과 추가 절감 전략을 함께 검토해야 합니다.';
 
   return [
     `우리 팀 이름: ${input.teamName || '팀 이름을 입력하세요'}`,
@@ -19,7 +25,7 @@ export function buildReportDraft(input: ReportInput): string {
     '',
     `전력 사용 패턴 요약: 가장 전기를 많이 쓰는 시간대는 ${peakHour}였습니다.`,
     `에너지 조합: 태양광 ${input.scenario.solarLevel}%, ESS ${input.scenario.essLevel}%, 수소 ${input.scenario.hydrogenLevel}%, 차세대 원자력 ${input.scenario.nuclearLevel}%, 절감률 ${input.scenario.savingRate}%입니다.`,
-    `에너지 자립률: 약 ${input.result.selfSufficiencyRate}%`,
+    selfSufficiencyLine,
     '',
     '우리가 선택한 핵심 전략 3가지',
     strategies || '1. 데이터에서 찾은 피크 시간을 줄이는 전략을 적어 보세요.',
@@ -31,6 +37,7 @@ export function buildReportDraft(input: ReportInput): string {
     '이 설계의 한계',
     '- 이 결과는 수업용 비교 모델이며 실제 도시 설계에는 더 많은 자료가 필요합니다.',
     '- 지역 일사량, 설치 면적, 비용, 안전 기준은 더 조사해야 합니다.',
+    surplusDiscussion,
     '',
     '더 조사해야 할 점',
     '- 실제 공공데이터와 학교 주변 조건을 더 확인해야 합니다.',

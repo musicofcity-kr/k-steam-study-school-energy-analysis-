@@ -17,9 +17,9 @@ const scenario: EnergyScenario = {
 };
 
 const assumptions: TeacherAssumptions = {
-  solarMaxKWh: 300,
-  hydrogenMaxKWh: 400,
-  nuclearMaxKWh: 500,
+  solarMaxKWhPerHour: 150,
+  hydrogenMaxKWhPerHour: 200,
+  nuclearMaxKWhPerHour: 250,
   savingMaxRate: 50,
   gridEmissionFactor: 0.45
 };
@@ -57,5 +57,25 @@ describe('reportBuilder', () => {
     expect(json.teamName).toBe('태양팀');
     expect(json.scenario.solarLevel).toBe(70);
     expect(json.result.selfSufficiencyRate).toBeGreaterThan(0);
+  });
+
+  it('adds a surplus discussion prompt when supply exceeds reduced usage', () => {
+    const result = calculateScenarioResult(
+      rows,
+      { ...scenario, solarLevel: 100, hydrogenLevel: 100, savingRate: 0 },
+      assumptions
+    );
+    const draft = buildReportDraft({
+      teamName: '태양팀',
+      cityName: '솔라스쿨시티',
+      dataSource: '수업 연습용 예시 데이터',
+      scenario,
+      result,
+      keyStrategies: ['태양광', '수소', '나눔']
+    });
+
+    expect(result.isSurplus).toBe(true);
+    expect(draft).toContain('잉여 전력');
+    expect(draft).toContain('저장하거나 이웃 지역과 나누는 방법');
   });
 });

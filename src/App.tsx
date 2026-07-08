@@ -4,11 +4,13 @@ import { practiceDataNotice, sampleEnergyUsageRows } from './data/sampleEnergyUs
 import type { EnergyScenario, EnergyUsageRow, ReportInput, TeacherAssumptions } from './types';
 import { calculateScenarioResult, calculateUsageSummary } from './utils/energyModel';
 import { buildReportDraft } from './utils/reportBuilder';
+import { restoreEnergyScenario, restoreTeacherAssumptions } from './utils/stateRestore';
 import { DataUploadSection } from './components/DataUploadSection';
 import { DesignLabSection } from './components/DesignLabSection';
 import { EnergyChart } from './components/EnergyChart';
 import { EnergySourceCards } from './components/EnergySourceCards';
 import { Header } from './components/Header';
+import { MissionMap, type MissionStep } from './components/MissionMap';
 import { ReportSection } from './components/ReportSection';
 import { StartSection } from './components/StartSection';
 import { TeacherSettingsPanel } from './components/TeacherSettingsPanel';
@@ -24,9 +26,9 @@ const defaultScenario: EnergyScenario = {
 };
 
 const defaultAssumptions: TeacherAssumptions = {
-  solarMaxKWh: 1200,
-  hydrogenMaxKWh: 900,
-  nuclearMaxKWh: 1100,
+  solarMaxKWhPerHour: 50,
+  hydrogenMaxKWhPerHour: 37.5,
+  nuclearMaxKWhPerHour: 45.8,
   savingMaxRate: 50,
   gridEmissionFactor: 0.45
 };
@@ -62,6 +64,10 @@ export default function App() {
   const [reportDraft, setReportDraft] = useState('');
   const [reportTouched, setReportTouched] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
+  const [dataMessage, setDataMessage] = useState('');
+  const [peakConfirmed, setPeakConfirmed] = useState(false);
+  const [cardsCompared, setCardsCompared] = useState(false);
+  const [designChanged, setDesignChanged] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -83,8 +89,8 @@ export default function App() {
 
       if (isEnergyRowArray(parsed.rows)) setRows(parsed.rows);
       if (typeof parsed.dataSource === 'string') setDataSource(parsed.dataSource);
-      if (parsed.scenario) setScenario({ ...defaultScenario, ...parsed.scenario });
-      if (parsed.assumptions) setAssumptions({ ...defaultAssumptions, ...parsed.assumptions });
+      if (parsed.scenario) setScenario(restoreEnergyScenario(parsed.scenario, defaultScenario));
+      if (parsed.assumptions) setAssumptions(restoreTeacherAssumptions(parsed.assumptions, defaultAssumptions));
       if (typeof parsed.teamName === 'string') setTeamName(parsed.teamName);
       if (typeof parsed.cityName === 'string') setCityName(parsed.cityName);
       if (Array.isArray(parsed.keyStrategies)) setKeyStrategies(parsed.keyStrategies.slice(0, 3));
@@ -111,6 +117,39 @@ export default function App() {
     }),
     [cityName, dataSource, keyStrategies, result, scenario, teamName]
   );
+  const missionSteps: MissionStep[] = [
+    {
+      id: 'data-lab',
+      title: '데이터 수집',
+      status: rows.length > 0 ? '완료' : '대기',
+      done: rows.length > 0
+    },
+    {
+      id: 'chart',
+      title: '패턴 탐정',
+      status: peakConfirmed ? '완료' : rows.length > 0 ? '피크 확인' : '대기',
+      done: peakConfirmed
+    },
+    {
+      id: 'energy-sources',
+      title: '에너지 카드',
+      status: cardsCompared ? '완료' : '카드 비교',
+      done: cardsCompared
+    },
+    {
+      id: 'design-lab',
+      title: '도시 설계 랩',
+      status: designChanged ? '완료' : '조절 대기',
+      done: designChanged
+    },
+    {
+      id: 'report',
+      title: '보고서 & 발표',
+      status: teamName.trim() && cityName.trim() ? '완료' : '작성 대기',
+      done: Boolean(teamName.trim() && cityName.trim())
+    }
+  ];
+  const activeMissionIndex = missionSteps.findIndex((step) => !step.done);
 
   useEffect(() => {
     if (!reportTouched) {
@@ -121,18 +160,20 @@ export default function App() {
   const loadPracticeData = () => {
     setRows(sampleEnergyUsageRows);
     setDataSource('수업 연습용 예시 데이터');
-    setSaveMessage(practiceDataNotice);
+    setDataMessage(practiceDataNotice);
+    setPeakConfirmed(false);
     scrollToId('data-lab');
   };
 
   const handleRowsParsed = (nextRows: EnergyUsageRow[], sourceLabel: string) => {
     setRows(nextRows);
     setDataSource(sourceLabel);
+    setPeakConfirmed(false);
     if (nextRows.length === 0) {
-      setSaveMessage(`${sourceLabel}에서 유효한 전력사용량 행을 찾지 못했습니다. usage_kWh 값을 확인해 주세요.`);
+      setDataMessage(`${sourceLabel}에서 유효한 전력사용량 행을 찾지 못했습니다. usage_kWh 값을 확인해 주세요.`);
       return;
     }
-    setSaveMessage(`${sourceLabel} 데이터를 불러왔습니다. 유효 행 ${nextRows.length}개를 사용합니다.`);
+    setDataMessage(`${sourceLabel} 데이터를 불러왔습니다. 유효 행 ${nextRows.length}개를 사용합니다.`);
   };
 
   const handleSaveState = () => {
@@ -150,6 +191,11 @@ export default function App() {
       })
     );
     setSaveMessage('현재 설계와 보고서를 이 브라우저에 저장했습니다.');
+  };
+
+  const handleScenarioChange = (nextScenario: EnergyScenario) => {
+    setScenario(nextScenario);
+    setDesignChanged(true);
   };
 
   const handleReportDraftChange = (value: string) => {
@@ -177,24 +223,27 @@ export default function App() {
           </span>
         </section>
 
+        <MissionMap steps={missionSteps} activeIndex={activeMissionIndex} onSelect={scrollToId} />
+
         <DataUploadSection
           rows={rows}
           summary={summary}
           dataSource={dataSource}
           uploadInputRef={uploadInputRef}
+          dataMessage={dataMessage}
           onRowsParsed={handleRowsParsed}
           onLoadPractice={loadPracticeData}
         />
 
-        <EnergyChart summary={summary} />
+        <EnergyChart summary={summary} peakConfirmed={peakConfirmed} onPeakConfirmed={() => setPeakConfirmed(true)} />
 
-        <EnergySourceCards cards={energySourceCards} />
+        <EnergySourceCards cards={energySourceCards} onCardCompared={() => setCardsCompared(true)} />
 
         <DesignLabSection
           scenario={scenario}
           assumptions={assumptions}
           result={result}
-          onScenarioChange={setScenario}
+          onScenarioChange={handleScenarioChange}
         />
 
         <TeacherSettingsPanel assumptions={assumptions} onAssumptionsChange={setAssumptions} />

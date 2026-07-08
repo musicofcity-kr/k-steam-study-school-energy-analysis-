@@ -24,9 +24,9 @@ const scenario: EnergyScenario = {
 };
 
 const assumptions: TeacherAssumptions = {
-  solarMaxKWh: 300,
-  hydrogenMaxKWh: 400,
-  nuclearMaxKWh: 500,
+  solarMaxKWhPerHour: 75,
+  hydrogenMaxKWhPerHour: 100,
+  nuclearMaxKWhPerHour: 125,
   savingMaxRate: 50,
   gridEmissionFactor: 0.45
 };
@@ -40,6 +40,30 @@ describe('calculateUsageSummary', () => {
     expect(summary.peakHour).toBe(14);
     expect(summary.peakUsageKWh).toBe(240);
     expect(summary.lowestHour).toBe(9);
+    expect(summary.dayCount).toBe(1);
+    expect(summary.byHourMode).toBe('sum');
+  });
+
+  it('averages by hour when data spans multiple dates', () => {
+    const multiDayRows: EnergyUsageRow[] = [
+      { date: '2026-07-01', hour: 9, usageKWh: 120 },
+      { date: '2026-07-01', hour: 14, usageKWh: 300 },
+      { date: '2026-07-02', hour: 9, usageKWh: 100 },
+      { date: '2026-07-02', hour: 14, usageKWh: 240 },
+      { date: '2026-07-03', hour: 9, usageKWh: 80 },
+      { date: '2026-07-03', hour: 14, usageKWh: 180 }
+    ];
+
+    const summary = calculateUsageSummary(multiDayRows);
+
+    expect(summary.dayCount).toBe(3);
+    expect(summary.byHourMode).toBe('average');
+    expect(summary.byHour).toEqual([
+      { hour: 9, usageKWh: 100 },
+      { hour: 14, usageKWh: 240 }
+    ]);
+    expect(summary.peakHour).toBe(14);
+    expect(summary.peakUsageKWh).toBe(240);
   });
 });
 
@@ -52,6 +76,57 @@ describe('calculateScenarioResult', () => {
     expect(result.sourceBreakdown.essKWh).toBe(0);
     expect(result.selfSufficiencyRate).toBeCloseTo(51.9, 1);
     expect(result.stabilityScore).toBeGreaterThan(60);
+  });
+
+  it('keeps self-sufficiency stable when the same daily pattern is repeated for 30 days', () => {
+    const oneDay = Array.from({ length: 24 }, (_, hour) => ({
+      date: '2026-07-01',
+      hour,
+      usageKWh: 100
+    }));
+    const thirtyDays = Array.from({ length: 30 }, (_, dayIndex) =>
+      oneDay.map((row) => ({
+        ...row,
+        date: `2026-07-${String(dayIndex + 1).padStart(2, '0')}`
+      }))
+    ).flat();
+    const hourlyAssumptions: TeacherAssumptions = {
+      solarMaxKWhPerHour: 50,
+      hydrogenMaxKWhPerHour: 25,
+      nuclearMaxKWhPerHour: 0,
+      savingMaxRate: 50,
+      gridEmissionFactor: 0.45
+    };
+    const fullSupplyScenario: EnergyScenario = {
+      solarLevel: 100,
+      essLevel: 0,
+      hydrogenLevel: 100,
+      nuclearLevel: 0,
+      savingRate: 0
+    };
+
+    const oneDayResult = calculateScenarioResult(oneDay, fullSupplyScenario, hourlyAssumptions);
+    const thirtyDayResult = calculateScenarioResult(thirtyDays, fullSupplyScenario, hourlyAssumptions);
+
+    expect(Math.abs(oneDayResult.selfSufficiencyRate - thirtyDayResult.selfSufficiencyRate)).toBeLessThanOrEqual(1);
+  });
+
+  it('reports surplus energy without changing the raw self-sufficiency calculation', () => {
+    const result = calculateScenarioResult(
+      [{ date: '2026-07-01', hour: 12, usageKWh: 100 }],
+      { solarLevel: 100, essLevel: 0, hydrogenLevel: 100, nuclearLevel: 0, savingRate: 0 },
+      {
+        solarMaxKWhPerHour: 120,
+        hydrogenMaxKWhPerHour: 80,
+        nuclearMaxKWhPerHour: 0,
+        savingMaxRate: 50,
+        gridEmissionFactor: 0.45
+      }
+    );
+
+    expect(result.selfSufficiencyRate).toBe(200);
+    expect(result.isSurplus).toBe(true);
+    expect(result.surplusKWh).toBe(100);
   });
 
   it('returns zeroed safe values for empty data', () => {
@@ -86,6 +161,18 @@ describe('scenario scores and explanation', () => {
     });
 
     expect(diverse).toBeGreaterThan(oneSource);
+  });
+
+  it('returns zero diversity when no energy strategy is active', () => {
+    expect(
+      calculateDiversityScore({
+        solarLevel: 0,
+        essLevel: 0,
+        hydrogenLevel: 0,
+        nuclearLevel: 0,
+        savingRate: 0
+      })
+    ).toBe(0);
   });
 
   it('uses ESS in stability score but not as a generator', () => {

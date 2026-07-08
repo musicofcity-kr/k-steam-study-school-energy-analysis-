@@ -6,31 +6,33 @@ type StartSectionProps = {
   onUploadClick: () => void;
 };
 
-const steps = ['공공데이터 불러오기', '전력 사용 패턴 찾기', '에너지원 비교하기', '미래 학교구역 설계하기', '근거 발표하기'];
-
 export function StartSection({ onStart, onLoadPractice, onUploadClick }: StartSectionProps) {
   return (
     <section className="start-section" id="start">
       <div className="start-copy">
-        <p className="eyebrow">중1 STEAM 데이터 탐험</p>
-        <h1>E-CITY 2050 에너지 자립 미래도시 설계실</h1>
+        <p className="eyebrow">미래도시 설계 관제탑</p>
+        <h1>E-CITY 2050 미션 관제탑</h1>
         <p className="lead">
-          우리 지역의 전기 사용 데이터를 분석하고, 2050년 탄소중립 미래도시의 에너지 조합을 설계해 봅시다.
+          데이터로 전기 사용 피크를 찾아내고, 2050년 우리 학교구역의 에너지 조합을 완성하세요.
         </p>
-        <div className="hero-actions">
-          <button className="primary-button" type="button" onClick={onStart}>
-            수업 시작하기
+        <div className="mission-choice-grid">
+          <button className="mission-choice recommended" type="button" onClick={onLoadPractice}>
+            <span>추천 · 바로 시작</span>
+            <strong>연습용 데이터로 출발하기</strong>
+            <small>가상 학교구역의 24시간 전력 데이터로 미션을 연습합니다.</small>
           </button>
-          <button className="secondary-button" type="button" onClick={onLoadPractice}>
-            예시 데이터로 체험하기
-          </button>
-          <button className="secondary-button" type="button" onClick={onUploadClick}>
-            CSV 데이터 업로드하기
+          <button className="mission-choice" type="button" onClick={onUploadClick}>
+            <span>선생님 준비 자료</span>
+            <strong>진짜 데이터 업로드하기</strong>
+            <small>공공데이터에서 내려받은 CSV를 올립니다. 열 이름이 달라도 앱이 찾아줍니다.</small>
           </button>
         </div>
+        <button className="secondary-button compact-button" type="button" onClick={onStart}>
+          미션 1로 이동
+        </button>
       </div>
       <div className="mission-panel" aria-label="오늘의 미션">
-        <h2>오늘의 미션</h2>
+        <h2>관제탑 브리핑</h2>
         <p>데이터에서 전력 사용 피크를 찾고, 그 문제를 줄이는 미래 학교구역 설계안을 만듭니다.</p>
         <div className="school-context">
           <strong>{gaewonSchoolContext.schoolName} 기준 수업</strong>
@@ -39,11 +41,7 @@ export function StartSection({ onStart, onLoadPractice, onUploadClick }: StartSe
           </span>
           <small>{gaewonSchoolContext.limitNotice}</small>
         </div>
-        <ol className="step-list">
-          {steps.map((step) => (
-            <li key={step}>{step}</li>
-          ))}
-        </ol>
+        <p className="model-note">지금 보이는 데이터와 기본값은 연습용입니다. 진짜 데이터는 선생님이 준비하고, 보고서에는 데이터 출처를 꼭 적습니다.</p>
       </div>
     </section>
   );

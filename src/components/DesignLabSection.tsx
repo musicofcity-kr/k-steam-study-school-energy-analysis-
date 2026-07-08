@@ -24,11 +24,11 @@ export function DesignLabSection({ scenario, assumptions, result, onScenarioChan
       <div className="design-grid">
         <div className="control-panel">
           <h3>설계 조절 패널</h3>
-          <Slider label="태양광 설치 규모" value={scenario.solarLevel} max={100} onChange={(value) => setScenarioValue('solarLevel', value)} hint="학교 옥상, 체육관, 주차장 지붕 등에 설치" />
-          <Slider label="ESS 저장 규모" value={scenario.essLevel} max={100} onChange={(value) => setScenarioValue('essLevel', value)} hint="남는 전기를 저장해 피크 시간에 대응" />
-          <Slider label="수소 에너지 활용" value={scenario.hydrogenLevel} max={100} onChange={(value) => setScenarioValue('hydrogenLevel', value)} hint="장시간 안정적 전력 공급 보조" />
-          <Slider label="차세대 원자력 활용" value={scenario.nuclearLevel} max={100} onChange={(value) => setScenarioValue('nuclearLevel', value)} hint="미래 기술 검토용 가상 선택지" />
-          <Slider label="에너지 절감률" value={scenario.savingRate} max={assumptions.savingMaxRate} onChange={(value) => setScenarioValue('savingRate', value)} hint="LED, 단열, 냉난방 효율, 대기전력 줄이기" />
+          <Slider color="solar" label="태양광 설치 규모" value={scenario.solarLevel} max={100} onChange={(value) => setScenarioValue('solarLevel', value)} hint="학교 옥상, 체육관, 주차장 지붕 등에 설치" />
+          <Slider color="ess" label="ESS 저장 규모" value={scenario.essLevel} max={100} onChange={(value) => setScenarioValue('essLevel', value)} hint="남는 전기를 저장해 피크 시간에 대응" badge="저장 담당" />
+          <Slider color="hydrogen" label="수소 에너지 활용" value={scenario.hydrogenLevel} max={100} onChange={(value) => setScenarioValue('hydrogenLevel', value)} hint="장시간 안정적 전력 공급 보조" />
+          <Slider color="nuclear" label="차세대 원자력 활용" value={scenario.nuclearLevel} max={100} onChange={(value) => setScenarioValue('nuclearLevel', value)} hint="미래 기술 검토용 가상 선택지" />
+          <Slider color="saving" label="에너지 절감률" value={scenario.savingRate} max={assumptions.savingMaxRate} onChange={(value) => setScenarioValue('savingRate', value)} hint="LED, 단열, 냉난방 효율, 대기전력 줄이기" />
         </div>
 
         <div className="city-panel">
@@ -46,22 +46,30 @@ export function DesignLabSection({ scenario, assumptions, result, onScenarioChan
 }
 
 function Slider({
+  color,
   label,
   value,
   max,
   hint,
+  badge,
   onChange
 }: {
+  color: 'solar' | 'ess' | 'hydrogen' | 'nuclear' | 'saving';
   label: string;
   value: number;
   max: number;
   hint: string;
+  badge?: string;
   onChange: (value: number) => void;
 }) {
   return (
-    <label className="slider-row">
+    <label className={`slider-row slider-${color}`}>
       <span>
-        <strong>{label}</strong>
+        <strong>
+          <span className="energy-dot" aria-hidden="true" />
+          {label}
+          {badge && <em>{badge}</em>}
+        </strong>
         <small>{hint}</small>
       </span>
       <output>{value}%</output>

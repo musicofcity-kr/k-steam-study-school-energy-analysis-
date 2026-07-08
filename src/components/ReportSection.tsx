@@ -68,12 +68,18 @@ export function ReportSection({
     <section className="report-section" id="report">
       <div className="section-heading">
         <p className="eyebrow">화면 5</p>
-        <h2>설계 결과 보고서</h2>
-        <p>자동 초안을 수정해 활동지나 1분 발표문으로 옮길 수 있습니다.</p>
+        <h2>미션 5: 보고서 & 발표</h2>
+        <p>데이터를 근거로 우리 팀의 설계를 설명하는 보고서를 완성하세요.</p>
       </div>
 
       <div className="report-grid">
         <div className="report-form">
+          <div className="report-checklist" aria-label="보고서 완성 체크리스트">
+            <ChecklistItem done={Boolean(teamName.trim())} label="팀 이름 정하기" />
+            <ChecklistItem done={Boolean(cityName.trim())} label="도시 이름 정하기" />
+            <ChecklistItem done={Boolean(dataSource.trim())} label="데이터 출처 확인하기" />
+            <ChecklistItem done={keyStrategies.every((strategy) => strategy.trim())} label="핵심 전략 3가지 적기" />
+          </div>
           <label htmlFor="team-name">
             우리 팀 이름
             <input id="team-name" value={teamName} onChange={(event) => onTeamNameChange(event.target.value)} placeholder="예: 태양팀" />
@@ -122,5 +128,14 @@ export function ReportSection({
         </div>
       </div>
     </section>
+  );
+}
+
+function ChecklistItem({ done, label }: { done: boolean; label: string }) {
+  return (
+    <span className={done ? 'done' : ''}>
+      <b aria-hidden="true">{done ? '✓' : ''}</b>
+      {label}
+    </span>
   );
 }
