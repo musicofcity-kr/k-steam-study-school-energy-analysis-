@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.test_runs/
+.playwright-mcp/
+.agents/
+.codex/
+.claude/
+docs/superpowers/
+E-CITY2050_개원중학교_데이터수집팩/
+CODEX_FEEDBACK.md
+*.log
+ecity2050-mobile-qa.png
