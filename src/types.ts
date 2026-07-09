@@ -19,6 +19,8 @@ export type TeacherAssumptions = {
   nuclearMaxKWhPerHour: number;
   savingMaxRate: number;
   gridEmissionFactor: number;
+  solarActiveStartHour: number;
+  solarActiveEndHour: number;
 };
 
 export type ColumnMapping = {
@@ -76,6 +78,7 @@ export type ScenarioResult = {
   };
   selfSufficiencyRate: number;
   surplusKWh: number;
+  gridImportKWh: number;
   isSurplus: boolean;
   stabilityScore: number;
   diversityScore: number;

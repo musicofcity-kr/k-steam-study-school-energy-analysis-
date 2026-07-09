@@ -22,6 +22,8 @@ export function restoreTeacherAssumptions(value: unknown, defaults: TeacherAssum
     hydrogenMaxKWhPerHour: finiteNumberOrDefault(source.hydrogenMaxKWhPerHour, defaults.hydrogenMaxKWhPerHour),
     nuclearMaxKWhPerHour: finiteNumberOrDefault(source.nuclearMaxKWhPerHour, defaults.nuclearMaxKWhPerHour),
     savingMaxRate: finiteNumberOrDefault(source.savingMaxRate, defaults.savingMaxRate),
-    gridEmissionFactor: finiteNumberOrDefault(source.gridEmissionFactor, defaults.gridEmissionFactor)
+    gridEmissionFactor: finiteNumberOrDefault(source.gridEmissionFactor, defaults.gridEmissionFactor),
+    solarActiveStartHour: finiteNumberOrDefault(source.solarActiveStartHour, defaults.solarActiveStartHour),
+    solarActiveEndHour: finiteNumberOrDefault(source.solarActiveEndHour, defaults.solarActiveEndHour)
   };
 }

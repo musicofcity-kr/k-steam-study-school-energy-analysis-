@@ -67,8 +67,8 @@ export function ReportSection({
   return (
     <section className="report-section" id="report">
       <div className="section-heading">
-        <p className="eyebrow">화면 5</p>
-        <h2>미션 5: 보고서 & 발표</h2>
+        <p className="eyebrow">미션 5</p>
+        <h2>5 보고서 & 발표</h2>
         <p>데이터를 근거로 우리 팀의 설계를 설명하는 보고서를 완성하세요.</p>
       </div>
 
@@ -105,7 +105,7 @@ export function ReportSection({
             <span>피크 {result.summary.peakHour === null ? '-' : `${result.summary.peakHour}시`}</span>
             <span>자립률 {result.selfSufficiencyRate}%</span>
             <span>태양광 {scenario.solarLevel}%</span>
-            <span>ESS {scenario.essLevel}%</span>
+            <span>ESS (전기 저장소) {scenario.essLevel}%</span>
           </div>
           <label htmlFor="report-draft">보고서 미리보기와 수정</label>
           <textarea id="report-draft" value={reportDraft} onChange={(event) => onReportDraftChange(event.target.value)} rows={18} />

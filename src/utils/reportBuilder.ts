@@ -16,7 +16,9 @@ export function buildReportDraft(input: ReportInput): string {
     : `에너지 자립률: 약 ${input.result.selfSufficiencyRate}%`;
   const surplusDiscussion = input.result.isSurplus
     ? `- 잉여 전력은 저장하거나 이웃 지역과 나누는 방법을 토론해야 합니다.`
-    : '- 부족한 전력은 외부 전력망과 추가 절감 전략을 함께 검토해야 합니다.';
+    : input.result.gridImportKWh > 0
+      ? `- 부족한 전기는 외부 전력망에서 가져옵니다. 현실 도시도 대부분 전력망과 연결되어 있어요.`
+      : '- 공급 가능 전력과 절감 후 소비량이 같으므로 유지 전략을 토론해야 합니다.';
 
   return [
     `우리 팀 이름: ${input.teamName || '팀 이름을 입력하세요'}`,
@@ -24,7 +26,7 @@ export function buildReportDraft(input: ReportInput): string {
     `사용한 데이터 출처: ${input.dataSource || '데이터 출처를 입력하세요'}`,
     '',
     `전력 사용 패턴 요약: 가장 전기를 많이 쓰는 시간대는 ${peakHour}였습니다.`,
-    `에너지 조합: 태양광 ${input.scenario.solarLevel}%, ESS ${input.scenario.essLevel}%, 수소 ${input.scenario.hydrogenLevel}%, 차세대 원자력 ${input.scenario.nuclearLevel}%, 절감률 ${input.scenario.savingRate}%입니다.`,
+    `에너지 조합: 태양광 ${input.scenario.solarLevel}%, ESS (전기 저장소) ${input.scenario.essLevel}%, 수소 ${input.scenario.hydrogenLevel}%, 차세대 원자력 ${input.scenario.nuclearLevel}%, 절감률 ${input.scenario.savingRate}%입니다.`,
     selfSufficiencyLine,
     '',
     '우리가 선택한 핵심 전략 3가지',
@@ -32,7 +34,7 @@ export function buildReportDraft(input: ReportInput): string {
     '',
     '이 설계의 장점',
     '- 전력 사용량이 높은 시간대를 근거로 에너지 조합을 정했습니다.',
-    '- ESS는 발전원이 아니라 전기를 저장해 피크 시간에 대응하는 장치로 보았습니다.',
+    '- ESS (전기 저장소)는 발전원이 아니라 전기를 저장해 피크 시간에 대응하는 장치로 보았습니다.',
     '',
     '이 설계의 한계',
     '- 이 결과는 수업용 비교 모델이며 실제 도시 설계에는 더 많은 자료가 필요합니다.',

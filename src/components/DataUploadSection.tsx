@@ -3,6 +3,7 @@ import { gaewonPowerUsageSource, gaewonSchoolContext, gaewonTemplatePath } from 
 import type { ColumnMapping, CsvParseResult, EnergyUsageRow, UsageSummary } from '../types';
 import { parseEnergyCsv } from '../utils/csvParser';
 import { decodeCsvBytes } from '../utils/decodeCsvFile';
+import { formatLowestHourLabel } from '../utils/hourLabels';
 
 type DataUploadSectionProps = {
   rows: EnergyUsageRow[];
@@ -92,15 +93,15 @@ export function DataUploadSection({
   return (
     <section className="section-grid" id="data-lab">
       <div className="section-heading">
-        <p className="eyebrow">화면 2</p>
-        <h2>공공데이터 탐색실</h2>
+        <p className="eyebrow">미션 1</p>
+        <h2>1 데이터 수집</h2>
         <p>CSV를 불러와 언제 전기를 많이 쓰는지 찾습니다. 예시 데이터는 실제 공공데이터가 아닙니다.</p>
       </div>
 
       <div className="data-panel">
         <div className="toolbar">
           <button className="primary-button" type="button" onClick={onLoadPractice}>
-            예시 데이터 불러오기
+            연습 데이터 불러오기
           </button>
           <label className="file-button" htmlFor="csv-upload">
             CSV 파일 선택
@@ -173,13 +174,13 @@ export function DataUploadSection({
         <Metric label="총 사용량" value={`${summary.totalUsageKWh} kWh`} />
         <Metric label="평균 사용량" value={`${summary.averageUsageKWh} kWh`} />
         <Metric label="가장 많이 쓴 시간" value={summary.peakHour === null ? '데이터 없음' : `${summary.peakHour}시`} />
-        <Metric label="가장 적게 쓴 시간" value={summary.lowestHour === null ? '데이터 없음' : `${summary.lowestHour}시`} />
+        <Metric label="가장 적게 쓴 시간" value={formatLowestHourLabel(summary)} />
       </div>
 
       <div className="table-wrap">
         <h3>데이터 미리보기</h3>
         {rows.length === 0 ? (
-          <p className="empty-state">CSV를 업로드하거나 예시 데이터를 불러오면 표가 나타납니다.</p>
+          <p className="empty-state">CSV를 업로드하거나 연습 데이터를 불러오면 표가 나타납니다.</p>
         ) : (
           <table>
             <thead>

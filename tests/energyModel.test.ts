@@ -28,7 +28,9 @@ const assumptions: TeacherAssumptions = {
   hydrogenMaxKWhPerHour: 100,
   nuclearMaxKWhPerHour: 125,
   savingMaxRate: 50,
-  gridEmissionFactor: 0.45
+  gridEmissionFactor: 0.45,
+  solarActiveStartHour: 7,
+  solarActiveEndHour: 18
 };
 
 describe('calculateUsageSummary', () => {
@@ -73,6 +75,7 @@ describe('calculateScenarioResult', () => {
 
     expect(result.reducedUsageKWh).toBe(540);
     expect(result.supplyKWh).toBe(280);
+    expect(result.gridImportKWh).toBe(260);
     expect(result.sourceBreakdown.essKWh).toBe(0);
     expect(result.selfSufficiencyRate).toBeCloseTo(51.9, 1);
     expect(result.stabilityScore).toBeGreaterThan(60);
@@ -95,7 +98,9 @@ describe('calculateScenarioResult', () => {
       hydrogenMaxKWhPerHour: 25,
       nuclearMaxKWhPerHour: 0,
       savingMaxRate: 50,
-      gridEmissionFactor: 0.45
+      gridEmissionFactor: 0.45,
+      solarActiveStartHour: 7,
+      solarActiveEndHour: 18
     };
     const fullSupplyScenario: EnergyScenario = {
       solarLevel: 100,
@@ -120,13 +125,50 @@ describe('calculateScenarioResult', () => {
         hydrogenMaxKWhPerHour: 80,
         nuclearMaxKWhPerHour: 0,
         savingMaxRate: 50,
-        gridEmissionFactor: 0.45
+        gridEmissionFactor: 0.45,
+        solarActiveStartHour: 7,
+        solarActiveEndHour: 18
       }
     );
 
     expect(result.selfSufficiencyRate).toBe(200);
     expect(result.isSurplus).toBe(true);
     expect(result.surplusKWh).toBe(100);
+    expect(result.gridImportKWh).toBe(0);
+  });
+
+  it('reports external grid import when supply is below reduced usage', () => {
+    const result = calculateScenarioResult(
+      [{ date: '2026-07-01', hour: 14, usageKWh: 100 }],
+      { solarLevel: 0, essLevel: 0, hydrogenLevel: 0, nuclearLevel: 0, savingRate: 0 },
+      assumptions
+    );
+
+    expect(result.selfSufficiencyRate).toBe(0);
+    expect(result.isSurplus).toBe(false);
+    expect(result.surplusKWh).toBe(0);
+    expect(result.gridImportKWh).toBe(100);
+  });
+
+  it('reports neither surplus nor grid import when supply exactly matches reduced usage', () => {
+    const result = calculateScenarioResult(
+      [{ date: '2026-07-01', hour: 14, usageKWh: 100 }],
+      { solarLevel: 100, essLevel: 0, hydrogenLevel: 0, nuclearLevel: 0, savingRate: 0 },
+      {
+        solarMaxKWhPerHour: 100,
+        hydrogenMaxKWhPerHour: 0,
+        nuclearMaxKWhPerHour: 0,
+        savingMaxRate: 50,
+        gridEmissionFactor: 0.45,
+        solarActiveStartHour: 7,
+        solarActiveEndHour: 18
+      }
+    );
+
+    expect(result.selfSufficiencyRate).toBe(100);
+    expect(result.isSurplus).toBe(false);
+    expect(result.surplusKWh).toBe(0);
+    expect(result.gridImportKWh).toBe(0);
   });
 
   it('returns zeroed safe values for empty data', () => {
@@ -189,6 +231,7 @@ describe('scenario scores and explanation', () => {
     expect(explanation).toContain('14시');
     expect(explanation).toContain('태양광');
     expect(explanation).toContain('ESS');
+    expect(explanation).toContain('외부 전력망');
     expect(explanation).toContain('수업용 비교 지표');
   });
 });

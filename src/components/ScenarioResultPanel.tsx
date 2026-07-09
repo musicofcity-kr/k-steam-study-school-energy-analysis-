@@ -1,11 +1,26 @@
-import type { ScenarioResult } from '../types';
+import { useState } from 'react';
+import type { EnergyScenario, ScenarioResult } from '../types';
 import { buildStudentExplanation } from '../utils/energyModel';
+import { buildWorksheetCopyText, buildWorksheetValueRows } from '../utils/worksheetSummary';
 
 type ScenarioResultPanelProps = {
   result: ScenarioResult;
+  scenario: EnergyScenario;
 };
 
-export function ScenarioResultPanel({ result }: ScenarioResultPanelProps) {
+export function ScenarioResultPanel({ result, scenario }: ScenarioResultPanelProps) {
+  const [copyMessage, setCopyMessage] = useState('');
+  const worksheetRows = buildWorksheetValueRows(scenario, result);
+
+  const copyWorksheetValues = async () => {
+    try {
+      await navigator.clipboard.writeText(buildWorksheetCopyText(scenario, result));
+      setCopyMessage('활동지에 적을 값을 복사했어요.');
+    } catch {
+      setCopyMessage('복사하지 못했어요. 값을 직접 보고 적어 주세요.');
+    }
+  };
+
   return (
     <div className="result-panel">
       <h3>에너지 자립률</h3>
@@ -40,6 +55,24 @@ export function ScenarioResultPanel({ result }: ScenarioResultPanelProps) {
           잉여 전력 {result.surplusKWh} kWh — 이 전기를 저장하거나 이웃 지역과 나누는 방법을 토론해 보세요.
         </p>
       )}
+      {!result.isSurplus && result.gridImportKWh > 0 && (
+        <p className="grid-import-note">외부 전력망에서 가져오는 전기: {result.gridImportKWh} kWh</p>
+      )}
+      <details className="worksheet-card">
+        <summary>활동지에 적을 값</summary>
+        <dl>
+          {worksheetRows.map(([label, value]) => (
+            <div key={label}>
+              <dt>{label}</dt>
+              <dd>{value}</dd>
+            </div>
+          ))}
+        </dl>
+        <button className="secondary-button" type="button" onClick={copyWorksheetValues}>
+          복사
+        </button>
+        {copyMessage && <p className="copy-message">{copyMessage}</p>}
+      </details>
       <p className="student-explanation">{buildStudentExplanation(result)}</p>
       <p className="model-note">점수는 실제 도시 설계값이 아니라 수업용 비교 지표입니다.</p>
     </div>

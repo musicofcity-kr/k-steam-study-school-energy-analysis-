@@ -15,7 +15,9 @@ const assumptionDefaults: TeacherAssumptions = {
   hydrogenMaxKWhPerHour: 37.5,
   nuclearMaxKWhPerHour: 45.8,
   savingMaxRate: 50,
-  gridEmissionFactor: 0.45
+  gridEmissionFactor: 0.45,
+  solarActiveStartHour: 7,
+  solarActiveEndHour: 18
 };
 
 describe('state restore helpers', () => {
@@ -57,7 +59,25 @@ describe('state restore helpers', () => {
       hydrogenMaxKWhPerHour: 37.5,
       nuclearMaxKWhPerHour: 45.8,
       savingMaxRate: 70,
-      gridEmissionFactor: 0.4
+      gridEmissionFactor: 0.4,
+      solarActiveStartHour: 7,
+      solarActiveEndHour: 18
+    });
+  });
+
+  it('restores solar active hour overlay settings from saved teacher assumptions', () => {
+    expect(
+      restoreTeacherAssumptions(
+        {
+          solarActiveStartHour: 8,
+          solarActiveEndHour: 17
+        },
+        assumptionDefaults
+      )
+    ).toEqual({
+      ...assumptionDefaults,
+      solarActiveStartHour: 8,
+      solarActiveEndHour: 17
     });
   });
 });

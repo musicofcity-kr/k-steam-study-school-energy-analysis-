@@ -16,8 +16,8 @@ export function DesignLabSection({ scenario, assumptions, result, onScenarioChan
   return (
     <section className="design-section" id="design-lab">
       <div className="section-heading">
-        <p className="eyebrow">화면 4</p>
-        <h2>미래 학교구역 설계실</h2>
+        <p className="eyebrow">미션 4</p>
+        <h2>4 도시 설계 랩</h2>
         <p>슬라이더를 움직이며 에너지 조합이 자립률과 점수에 어떤 영향을 주는지 비교합니다.</p>
       </div>
 
@@ -25,7 +25,7 @@ export function DesignLabSection({ scenario, assumptions, result, onScenarioChan
         <div className="control-panel">
           <h3>설계 조절 패널</h3>
           <Slider color="solar" label="태양광 설치 규모" value={scenario.solarLevel} max={100} onChange={(value) => setScenarioValue('solarLevel', value)} hint="학교 옥상, 체육관, 주차장 지붕 등에 설치" />
-          <Slider color="ess" label="ESS 저장 규모" value={scenario.essLevel} max={100} onChange={(value) => setScenarioValue('essLevel', value)} hint="남는 전기를 저장해 피크 시간에 대응" badge="저장 담당" />
+          <Slider color="ess" label="ESS (전기 저장소)" value={scenario.essLevel} max={100} onChange={(value) => setScenarioValue('essLevel', value)} hint="남는 전기를 저장해 피크 시간에 대응" badge="발전 아님 · 저장 담당" />
           <Slider color="hydrogen" label="수소 에너지 활용" value={scenario.hydrogenLevel} max={100} onChange={(value) => setScenarioValue('hydrogenLevel', value)} hint="장시간 안정적 전력 공급 보조" />
           <Slider color="nuclear" label="차세대 원자력 활용" value={scenario.nuclearLevel} max={100} onChange={(value) => setScenarioValue('nuclearLevel', value)} hint="미래 기술 검토용 가상 선택지" />
           <Slider color="saving" label="에너지 절감률" value={scenario.savingRate} max={assumptions.savingMaxRate} onChange={(value) => setScenarioValue('savingRate', value)} hint="LED, 단열, 냉난방 효율, 대기전력 줄이기" />
@@ -39,7 +39,7 @@ export function DesignLabSection({ scenario, assumptions, result, onScenarioChan
           </p>
         </div>
 
-        <ScenarioResultPanel result={result} />
+        <ScenarioResultPanel scenario={scenario} result={result} />
       </div>
     </section>
   );
@@ -116,7 +116,7 @@ function SchoolZoneVisual({ scenario }: { scenario: EnergyScenario }) {
         </g>
       ))}
       <text x="42" y="240" fill="#0f172a" fontSize="16" fontWeight="700">
-        태양광 {scenario.solarLevel}% · ESS {scenario.essLevel}% · 절감 {scenario.savingRate}%
+        태양광 {scenario.solarLevel}% · ESS (전기 저장소) {scenario.essLevel}% · 절감 {scenario.savingRate}%
       </text>
     </svg>
   );

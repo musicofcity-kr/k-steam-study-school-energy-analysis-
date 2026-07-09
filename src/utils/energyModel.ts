@@ -138,6 +138,7 @@ export function calculateScenarioResult(
   const supplyKWh = round1(solarKWh + hydrogenKWh + nuclearKWh);
   const selfSufficiencyRate = reducedUsageKWh > 0 ? round1((supplyKWh / reducedUsageKWh) * 100) : 0;
   const surplusKWh = round1(Math.max(0, supplyKWh - reducedUsageKWh));
+  const gridImportKWh = round1(Math.max(0, reducedUsageKWh - supplyKWh));
   const avoidedKWh = Math.max(0, summary.totalUsageKWh - Math.max(0, reducedUsageKWh - supplyKWh));
 
   return {
@@ -152,6 +153,7 @@ export function calculateScenarioResult(
     },
     selfSufficiencyRate,
     surplusKWh,
+    gridImportKWh,
     isSurplus: surplusKWh > 0,
     stabilityScore: calculateStabilityScore(scenario),
     diversityScore: calculateDiversityScore(scenario),
@@ -169,11 +171,13 @@ export function buildStudentExplanation(result: ScenarioResult): string {
 
   const selfSufficiencySentence = result.isSurplus
     ? `현재 설계는 에너지 자립률 100%를 달성했고, 잉여 전력 ${result.surplusKWh} kWh가 생깁니다. 이 전기를 저장하거나 이웃 지역과 나누는 방법을 토론해 보세요.`
+    : result.gridImportKWh > 0
+      ? `현재 설계의 에너지 자립률은 약 ${result.selfSufficiencyRate}%이며, 이 값은 수업용 비교 지표입니다. 부족한 전기는 외부 전력망에서 가져옵니다. 현실 도시도 대부분 전력망과 연결되어 있어요.`
     : `현재 설계의 에너지 자립률은 약 ${result.selfSufficiencyRate}%이며, 이 값은 실제 공학값이 아니라 수업용 비교 지표입니다.`;
 
   return [
     `이 데이터에서 전력 사용량이 가장 높은 시간은 ${result.summary.peakHour}시입니다.`,
-    `태양광은 낮 시간 전력 공급에 도움을 주고, ESS는 발전량이 아니라 피크 시간 대응과 안정성에 도움을 줍니다.`,
+    `태양광은 낮 시간 전력 공급에 도움을 주고, ESS (전기 저장소)는 발전량이 아니라 피크 시간 대응에 도움을 줍니다.`,
     selfSufficiencySentence
   ].join(' ');
 }

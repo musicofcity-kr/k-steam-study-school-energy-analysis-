@@ -823,6 +823,58 @@ th {
   font-weight: 800;
 }
 
+.grid-import-note {
+  border-radius: 14px;
+  margin: 12px 0;
+  padding: 12px 14px;
+  background: #eff6ff;
+  color: #1e3a8a;
+  font-weight: 800;
+}
+
+.worksheet-card {
+  margin-top: 14px;
+  border: 1px solid #dbeafe;
+  border-radius: 16px;
+  background: var(--surface-soft);
+  padding: 14px;
+}
+
+.worksheet-card summary {
+  cursor: pointer;
+  font-family: "Gmarket Sans", "Pretendard Variable", sans-serif;
+}
+
+.worksheet-card dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.worksheet-card div {
+  border-radius: 12px;
+  background: white;
+  padding: 10px 12px;
+}
+
+.worksheet-card dt {
+  color: #64748b;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.worksheet-card dd {
+  margin: 5px 0 0;
+  font-family: "Gmarket Sans", "Pretendard Variable", sans-serif;
+}
+
+.copy-message {
+  margin: 10px 0 0;
+  color: #065f46;
+  font-weight: 800;
+}
+
 .slider-row {
   grid-template-columns: minmax(0, 1fr) 64px;
   align-items: center;
@@ -879,6 +931,15 @@ output {
   border-radius: 16px;
   padding: 16px;
   background: var(--surface-soft);
+}
+
+.solar-active-caption {
+  margin: -2px 0 14px;
+  border-radius: 14px;
+  background: #fffbeb;
+  color: #92400e;
+  padding: 10px 12px;
+  font-weight: 800;
 }
 
 .mission-action-panel strong {
@@ -989,7 +1050,8 @@ textarea {
   .summary-grid,
   .score-grid,
   .source-card-grid,
-  .teacher-grid {
+  .teacher-grid,
+  .worksheet-card dl {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -1013,6 +1075,7 @@ textarea {
   .score-grid,
   .source-card-grid,
   .teacher-grid,
+  .worksheet-card dl,
   .mission-choice-grid,
   .result-hero {
     grid-template-columns: 1fr;

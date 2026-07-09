@@ -18,8 +18,8 @@ export function StartSection({ onStart, onLoadPractice, onUploadClick }: StartSe
         <div className="mission-choice-grid">
           <button className="mission-choice recommended" type="button" onClick={onLoadPractice}>
             <span>추천 · 바로 시작</span>
-            <strong>연습용 데이터로 출발하기</strong>
-            <small>가상 학교구역의 24시간 전력 데이터로 미션을 연습합니다.</small>
+            <strong>수업용 가정 데이터로 출발하기</strong>
+            <small>하루 900 kWh, 피크 14시인 24시간 전력 데이터로 미션을 연습합니다.</small>
           </button>
           <button className="mission-choice" type="button" onClick={onUploadClick}>
             <span>선생님 준비 자료</span>
@@ -28,7 +28,7 @@ export function StartSection({ onStart, onLoadPractice, onUploadClick }: StartSe
           </button>
         </div>
         <button className="secondary-button compact-button" type="button" onClick={onStart}>
-          미션 1로 이동
+          1 데이터 수집으로 이동
         </button>
       </div>
       <div className="mission-panel" aria-label="오늘의 미션">

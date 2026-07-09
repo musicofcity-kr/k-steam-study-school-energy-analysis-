@@ -12,11 +12,11 @@ export const energySourceCards: EnergySourceCard[] = [
   },
   {
     id: 'ess',
-    name: 'ESS',
+    name: 'ESS (전기 저장소)',
     shortDescription: '남는 전기를 저장했다가 필요할 때 꺼내 쓰는 저장 장치입니다.',
     strengths: ['낮에 남은 전기를 저장할 수 있습니다.', '전기를 많이 쓰는 시간대 부담을 줄일 수 있습니다.'],
     limits: ['저장 용량에 한계가 있습니다.', '발전원이 아니라 저장 장치입니다.'],
-    role: '피크 시간 대응과 안정성 향상',
+    role: '피크 시간 대응 향상',
     studentTerm: '전기를 담아 두는 큰 배터리'
   },
   {

@@ -30,7 +30,9 @@ const defaultAssumptions: TeacherAssumptions = {
   hydrogenMaxKWhPerHour: 37.5,
   nuclearMaxKWhPerHour: 45.8,
   savingMaxRate: 50,
-  gridEmissionFactor: 0.45
+  gridEmissionFactor: 0.45,
+  solarActiveStartHour: 7,
+  solarActiveEndHour: 18
 };
 
 const defaultStrategies = ['피크 시간 전력 사용 줄이기', '낮 시간 태양광 활용하기', 'ESS로 남는 전기 저장하기'];
@@ -120,31 +122,31 @@ export default function App() {
   const missionSteps: MissionStep[] = [
     {
       id: 'data-lab',
-      title: '데이터 수집',
+      title: '1 데이터 수집',
       status: rows.length > 0 ? '완료' : '대기',
       done: rows.length > 0
     },
     {
       id: 'chart',
-      title: '패턴 탐정',
+      title: '2 패턴 탐정',
       status: peakConfirmed ? '완료' : rows.length > 0 ? '피크 확인' : '대기',
       done: peakConfirmed
     },
     {
       id: 'energy-sources',
-      title: '에너지 카드',
+      title: '3 에너지 카드',
       status: cardsCompared ? '완료' : '카드 비교',
       done: cardsCompared
     },
     {
       id: 'design-lab',
-      title: '도시 설계 랩',
+      title: '4 도시 설계 랩',
       status: designChanged ? '완료' : '조절 대기',
       done: designChanged
     },
     {
       id: 'report',
-      title: '보고서 & 발표',
+      title: '5 보고서 & 발표',
       status: teamName.trim() && cityName.trim() ? '완료' : '작성 대기',
       done: Boolean(teamName.trim() && cityName.trim())
     }
@@ -159,7 +161,7 @@ export default function App() {
 
   const loadPracticeData = () => {
     setRows(sampleEnergyUsageRows);
-    setDataSource('수업 연습용 예시 데이터');
+    setDataSource('수업용 가정 데이터');
     setDataMessage(practiceDataNotice);
     setPeakConfirmed(false);
     scrollToId('data-lab');
@@ -235,7 +237,14 @@ export default function App() {
           onLoadPractice={loadPracticeData}
         />
 
-        <EnergyChart summary={summary} peakConfirmed={peakConfirmed} onPeakConfirmed={() => setPeakConfirmed(true)} />
+        <EnergyChart
+          summary={summary}
+          peakConfirmed={peakConfirmed}
+          solarLevel={scenario.solarLevel}
+          solarActiveStartHour={assumptions.solarActiveStartHour}
+          solarActiveEndHour={assumptions.solarActiveEndHour}
+          onPeakConfirmed={() => setPeakConfirmed(true)}
+        />
 
         <EnergySourceCards cards={energySourceCards} onCardCompared={() => setCardsCompared(true)} />
 

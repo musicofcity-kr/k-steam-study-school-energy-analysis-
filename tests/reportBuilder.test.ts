@@ -21,7 +21,9 @@ const assumptions: TeacherAssumptions = {
   hydrogenMaxKWhPerHour: 200,
   nuclearMaxKWhPerHour: 250,
   savingMaxRate: 50,
-  gridEmissionFactor: 0.45
+  gridEmissionFactor: 0.45,
+  solarActiveStartHour: 7,
+  solarActiveEndHour: 18
 };
 
 describe('reportBuilder', () => {
@@ -77,5 +79,25 @@ describe('reportBuilder', () => {
     expect(result.isSurplus).toBe(true);
     expect(draft).toContain('잉여 전력');
     expect(draft).toContain('저장하거나 이웃 지역과 나누는 방법');
+  });
+
+  it('adds the external grid sentence when supply is below reduced usage', () => {
+    const result = calculateScenarioResult(
+      rows,
+      { solarLevel: 0, essLevel: 20, hydrogenLevel: 0, nuclearLevel: 0, savingRate: 0 },
+      assumptions
+    );
+    const draft = buildReportDraft({
+      teamName: '전력망팀',
+      cityName: '그리드시티',
+      dataSource: '수업용 가정 데이터',
+      scenario,
+      result,
+      keyStrategies: ['절감', '저장', '전력망']
+    });
+
+    expect(result.gridImportKWh).toBeGreaterThan(0);
+    expect(draft).toContain('부족한 전기는 외부 전력망에서 가져옵니다');
+    expect(draft).toContain('현실 도시도 대부분 전력망과 연결되어 있어요');
   });
 });
