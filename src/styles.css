@@ -1,16 +1,3 @@
-@font-face {
-  font-family: "Pretendard Variable";
-  src: url("https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/variable/woff2/PretendardVariable.woff2") format("woff2");
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Gmarket Sans";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff") format("woff");
-  font-weight: 700;
-  font-display: swap;
-}
-
 :root {
   --sky-top: #eaf4ff;
   --sky-bottom: #fff9ee;
@@ -21,6 +8,7 @@
   --solar: #ffaf1f;
   --ess: #7b6cf6;
   --hydrogen: #16bbd9;
+  --action: #08768a;
   --nuclear: #2fb673;
   --saving: #ff6e5c;
   --success: #2fb673;
@@ -34,7 +22,7 @@
   color: var(--ink);
   background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
   font-family:
-    "Pretendard Variable", Pretendard, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    "Malgun Gothic", "Apple SD Gothic Neo", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
@@ -117,6 +105,115 @@ button {
   gap: 8px;
 }
 
+.header-tools {
+  display: grid;
+  min-width: 0;
+  justify-items: end;
+  gap: 8px;
+}
+
+.source-file-pill {
+  max-width: min(320px, 40vw);
+  overflow-wrap: anywhere;
+}
+
+.provenance-practice-assumption {
+  border-color: #f59e0b !important;
+  background: #fffbeb !important;
+}
+
+.provenance-teacher-prepared-public-data {
+  border-color: #0f766e !important;
+  background: #ecfdf5 !important;
+}
+
+.provenance-unknown-upload {
+  border-color: #b45309 !important;
+  background: #fff7ed !important;
+}
+
+.teacher-mode-badge {
+  border-color: #6d28d9 !important;
+  background: #f5f3ff !important;
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.header-actions button {
+  min-height: 44px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 6px 10px;
+  background: white;
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.storage-status {
+  border-color: #15803d !important;
+  background: #f0fdf4 !important;
+  color: #166534 !important;
+}
+
+.reset-dialog-backdrop {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.62);
+}
+
+.reset-dialog {
+  width: min(100%, 440px);
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 22px;
+  background: white;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.28);
+}
+
+.reset-dialog h2 {
+  margin: 0 0 10px;
+  font-size: 1.25rem;
+}
+
+.reset-dialog p {
+  margin: 0;
+  color: var(--ink-soft);
+  line-height: 1.65;
+}
+
+.reset-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.reset-dialog-actions button {
+  min-height: 44px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 8px 14px;
+  background: white;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.reset-dialog-actions .danger-button {
+  border-color: #b91c1c;
+  background: #b91c1c;
+  color: white;
+}
+
 .status-pills span,
 .report-stats span {
   border: 1px solid #cbd5e1;
@@ -157,6 +254,24 @@ main {
   color: var(--ink-soft);
   font-size: 1.2rem;
   line-height: 1.7;
+}
+
+.opening-questions {
+  max-width: 680px;
+  margin: 24px 0;
+  border-left: 5px solid var(--solar);
+  padding: 16px 18px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.opening-questions ul {
+  margin: 10px 0 0;
+  padding-left: 22px;
+  line-height: 1.8;
+}
+
+.start-lesson-button {
+  min-width: 220px;
 }
 
 .eyebrow {
@@ -325,9 +440,9 @@ main {
 }
 
 .primary-button {
-  background: var(--hydrogen);
+  background: var(--action);
   color: white;
-  box-shadow: 0 12px 24px rgba(22, 187, 217, 0.24);
+  box-shadow: 0 12px 24px rgba(8, 118, 138, 0.24);
 }
 
 .secondary-button,
@@ -564,8 +679,40 @@ textarea:focus,
 button:focus-visible,
 .file-button:focus-visible,
 .secondary-link:focus-visible {
-  outline: 3px solid rgba(22, 187, 217, 0.4);
+  outline: 3px solid #0f4c5c;
   outline-offset: 2px;
+}
+
+.provenance-panel {
+  display: grid;
+  gap: 12px;
+  border-top: 1px solid #dbeafe;
+  padding-top: 16px;
+}
+
+.provenance-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.chart-data-table {
+  margin-top: 14px;
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  padding: 12px;
+  background: white;
+}
+
+.chart-data-table summary {
+  min-height: 44px;
+  padding: 10px 4px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.peak-reason-field {
+  margin-top: 6px;
 }
 
 .summary-grid,
@@ -1039,6 +1186,7 @@ textarea {
 
   .topbar {
     position: static;
+    flex-direction: column;
     align-items: flex-start;
   }
 
@@ -1046,12 +1194,25 @@ textarea {
     justify-content: flex-start;
   }
 
+  .header-tools {
+    width: 100%;
+    justify-items: start;
+  }
+
+  .header-actions {
+    justify-content: flex-start;
+  }
+
+  .source-file-pill {
+    max-width: 100%;
+  }
+
   .mapping-grid,
   .summary-grid,
   .score-grid,
   .source-card-grid,
   .teacher-grid,
-  .worksheet-card dl {
+    .worksheet-card dl {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -1068,6 +1229,15 @@ textarea {
 
   .start-section {
     min-height: auto;
+  }
+
+  #electricity-journey .mission-panel {
+    padding: 18px;
+  }
+
+  #electricity-journey .step-list {
+    gap: 6px;
+    margin-top: 10px;
   }
 
   .mapping-grid,
@@ -1129,6 +1299,20 @@ textarea {
   td {
     border-bottom: 0;
     padding: 6px 4px;
+  }
+
+  #data-lab td::before,
+  .chart-data-table td::before {
+    display: block;
+    margin-bottom: 2px;
+    color: #64748b;
+    content: attr(data-label);
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  .provenance-fields {
+    grid-template-columns: 1fr;
   }
 }
 

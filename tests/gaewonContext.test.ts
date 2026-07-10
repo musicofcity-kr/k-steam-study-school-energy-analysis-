@@ -56,9 +56,20 @@ describe('gaewon data pack integration', () => {
         rows: [],
         summary: emptySummary,
         dataSource: '데이터 없음',
+        dataProvenance: 'unknown-upload',
+        provenanceDetails: {
+          provider: '',
+          datasetName: '',
+          referenceDate: '',
+          regionUnit: '',
+          scope: 'unknown'
+        },
         dataMessage: '',
+        dataMessageTone: 'success',
+        isTeacherMode: true,
         uploadInputRef: createRef<HTMLInputElement>(),
         onRowsParsed: () => undefined,
+        onProvenanceChange: () => undefined,
         onLoadPractice: () => undefined
       })
     );
@@ -68,5 +79,28 @@ describe('gaewon data pack integration', () => {
     expect(html).toContain(gaewonPowerUsageSource.sourceUrl);
     expect(html).toContain(gaewonPowerUsageSource.standardColumns.join(', '));
     expect(html).toContain('팩에는 빈 업로드 템플릿만 있고 실제 학교 전력값은 포함되어 있지 않습니다');
+  });
+
+  it('locks the provenance selector for practice data', () => {
+    const html = renderToStaticMarkup(
+      createElement(DataUploadSection, {
+        rows: [],
+        summary: emptySummary,
+        dataSource: '수업용 가정 데이터',
+        dataProvenance: 'practice-assumption',
+        provenanceDetails: { provider: '', datasetName: '', referenceDate: '', regionUnit: '', scope: 'unknown' },
+        dataMessage: '',
+        dataMessageTone: 'success',
+        isTeacherMode: true,
+        provenanceLocked: true,
+        uploadInputRef: createRef<HTMLInputElement>(),
+        onRowsParsed: () => undefined,
+        onProvenanceChange: () => undefined,
+        onLoadPractice: () => undefined
+      })
+    );
+
+    expect(html).toContain('<select disabled=""><option value="practice-assumption" selected=""');
+    expect(html).toContain('연습 데이터의 출처 표시는 수업용 가정 데이터로 고정됩니다.');
   });
 });

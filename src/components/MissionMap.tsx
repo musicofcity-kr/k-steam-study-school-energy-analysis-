@@ -3,6 +3,7 @@ export type MissionStep = {
   title: string;
   status: string;
   done: boolean;
+  locked?: boolean;
 };
 
 type MissionMapProps = {
@@ -19,8 +20,13 @@ export function MissionMap({ steps, activeIndex, onSelect }: MissionMapProps) {
         {steps.map((step, index) => {
           const isActive = index === activeIndex;
           return (
-            <li className={step.done ? 'done' : isActive ? 'active' : ''} key={step.id}>
-              <button type="button" onClick={() => onSelect(step.id)} aria-current={isActive ? 'step' : undefined}>
+            <li className={step.done ? 'done' : step.locked ? 'locked' : isActive ? 'active' : ''} key={step.id}>
+              <button
+                type="button"
+                onClick={() => onSelect(step.id)}
+                aria-current={isActive ? 'step' : undefined}
+                disabled={step.locked}
+              >
                 <span className="mission-node">{step.done ? '✓' : index + 1}</span>
                 <strong>{step.title}</strong>
                 <small>{step.status}</small>

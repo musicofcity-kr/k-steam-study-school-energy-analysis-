@@ -11,7 +11,7 @@ export const scoreWeights = {
     ess: 0.45,
     saving: 0.4,
     hydrogen: 0.12,
-    nuclear: 0.08,
+    smartControl: 0.15,
     diversity: 0.2
   },
   environmental: {
@@ -20,9 +20,9 @@ export const scoreWeights = {
     solar: 0.38,
     saving: 0.75,
     ess: 0.12,
-    // 수소와 차세대 원자력은 토론용 선택지이므로 작은 가산만 둔다.
-    hydrogen: 0.08,
-    nuclear: 0.04
+    smartControl: 0.15,
+    // 수소는 재생전력 기반 생산을 가정한 경우에만 작은 가산을 둔다.
+    greenHydrogen: 0.08
   },
   realism: {
     // 학교 공간에서 상상하기 쉬운 태양광, ESS, 절감은 현실성에 가산한다.
@@ -30,8 +30,8 @@ export const scoreWeights = {
     solar: 0.2,
     ess: 0.18,
     saving: 0.75,
-    // 미래 인프라 논의가 필요한 기술은 설치 난이도 토론을 위해 감산한다.
-    hydrogenPenalty: 0.08,
-    nuclearPenalty: 0.15
+    smartControl: 0.15,
+    // 조건부 지역 인프라가 필요한 수소 연료전지는 설치 난이도 토론을 위해 감산한다.
+    hydrogenPenalty: 0.08
   }
 } as const;

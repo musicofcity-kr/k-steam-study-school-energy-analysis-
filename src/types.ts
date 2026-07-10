@@ -8,19 +8,59 @@ export type EnergyUsageRow = {
 export type EnergyScenario = {
   solarLevel: number;
   essLevel: number;
-  hydrogenLevel: number;
-  nuclearLevel: number;
+  hydrogenFuelCellLevel: number;
   savingRate: number;
+  smartControlLevel: number;
 };
 
 export type TeacherAssumptions = {
-  solarMaxKWhPerHour: number;
+  solarMaxKWhPerActiveHour: number;
   hydrogenMaxKWhPerHour: number;
-  nuclearMaxKWhPerHour: number;
+  essMaxCapacityKWh: number;
+  essMaxChargeKWhPerHour: number;
+  essMaxDischargeKWhPerHour: number;
+  essRoundTripEfficiency: number;
   savingMaxRate: number;
+  smartControlMaxPeakSavingRate: number;
   gridEmissionFactor: number;
   solarActiveStartHour: number;
   solarActiveEndHour: number;
+  hydrogenSource: 'green' | 'mixed' | 'unspecified';
+};
+
+export type EnergyRole = 'generation' | 'storage' | 'saving' | 'management' | 'external-supply';
+
+export type PlacementScope = 'onsite' | 'district-conditional' | 'external-grid';
+
+export type EnergyTechnology = {
+  id: string;
+  name: string;
+  role: EnergyRole;
+  placement: PlacementScope;
+  simplePrinciple: string;
+  processSteps: string[];
+  requiredConditions: string[];
+  difficultNearSchoolReasons: string[];
+  futureSchoolRole: string;
+  strengths: string[];
+  limits: string[];
+  misconceptionWarning?: string;
+};
+
+export type TechnologyPlacementDecision = {
+  technologyId: string;
+  placement: PlacementScope;
+  reason: string;
+};
+
+export type DataProvenance = 'practice-assumption' | 'teacher-prepared-public-data' | 'unknown-upload';
+
+export type DataProvenanceDetails = {
+  provider: string;
+  datasetName: string;
+  referenceDate: string;
+  regionUnit: string;
+  scope: 'school' | 'regional-proxy' | 'unknown';
 };
 
 export type ColumnMapping = {
@@ -66,19 +106,39 @@ export type UsageSummary = {
   byHour: Array<{ hour: number; usageKWh: number }>;
 };
 
+export type HourlyEnergyBalance = {
+  date?: string;
+  hour: number;
+  demandKWh: number;
+  reducedDemandKWh: number;
+  solarGeneratedKWh: number;
+  hydrogenGeneratedKWh: number;
+  directLocalUseKWh: number;
+  essChargeKWh: number;
+  essDischargeKWh: number;
+  essStateOfChargeKWh: number;
+  gridImportKWh: number;
+  surplusKWh: number;
+};
+
 export type ScenarioResult = {
   summary: UsageSummary;
   reducedUsageKWh: number;
+  hourlyBalance: HourlyEnergyBalance[];
+  localSupplyRate: number;
   supplyKWh: number;
-  sourceBreakdown: {
-    solarKWh: number;
-    hydrogenKWh: number;
-    nuclearKWh: number;
-    essKWh: number;
-  };
-  selfSufficiencyRate: number;
-  surplusKWh: number;
   gridImportKWh: number;
+  surplusKWh: number;
+  nightGridDependent: boolean;
+  peakGridImportKWh: number;
+  sourceBreakdown: {
+    solarGeneratedKWh: number;
+    hydrogenGeneratedKWh: number;
+    directLocalUseKWh: number;
+    essChargeKWh: number;
+    essDischargeKWh: number;
+    essEndStateOfChargeKWh: number;
+  };
   isSurplus: boolean;
   stabilityScore: number;
   diversityScore: number;
@@ -102,6 +162,10 @@ export type ReportInput = {
   teamName: string;
   cityName: string;
   dataSource: string;
+  dataProvenance: DataProvenance;
+  provenanceDetails: DataProvenanceDetails;
+  placementDecisions: TechnologyPlacementDecision[];
+  peakReason: string;
   scenario: EnergyScenario;
   result: ScenarioResult;
   keyStrategies: string[];
@@ -109,4 +173,10 @@ export type ReportInput = {
 
 export type ReportJson = ReportInput & {
   createdAt: string;
+};
+
+export type SavedEnergyStateV2 = {
+  version: 2;
+  scenario: EnergyScenario;
+  assumptions: TeacherAssumptions;
 };
